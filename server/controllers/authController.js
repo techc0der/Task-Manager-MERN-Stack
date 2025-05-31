@@ -94,8 +94,10 @@ const loginUser = async (req, res) => {
 
         return res.status(200).json({
             msg: 'Login successful',
+            id: userRecord.id,
             username: userRecord.username,
             email: userRecord.email,
+            profileImage : userRecord.profileImage,
             token: userRecord.token
         });
 
@@ -150,18 +152,13 @@ const updateUserProfile = async (req, res) => {
             }
         }
 
-        name = name || checkValidUser.name;
-        email = email || checkValidUser.email;
-        username = username || checkValidUser.username;
-        phone = phone || checkValidUser.phone;
-        bio = bio || checkValidUser.bio;
-
-        checkValidUser.name = name;
-        checkValidUser.email = email;
-        checkValidUser.username = username;
-        checkValidUser.phone = phone;
-        checkValidUser.bio = bio;
-
+        if(username && username != checkValidUser.username) checkValidUser.token = generateToken(checkValidUser.username);
+        
+        checkValidUser.name = name || checkValidUser.name;
+        checkValidUser.email = email || checkValidUser.email;
+        checkValidUser.username = username || checkValidUser.username;
+        checkValidUser.phone = phone || checkValidUser.phone;
+        checkValidUser.bio = bio || checkValidUser.bio;
 
         if (password) {
             const hashedPassword = await bcrypt.hash(password, 10);
@@ -173,11 +170,12 @@ const updateUserProfile = async (req, res) => {
         return res.status(200).json({
             msg: "User updated successfully",
             user: {
-                name: checkValidUser.name,
-                email: checkValidUser.email,
-                username: checkValidUser.username,
-                phone: checkValidUser.phone,
-                bio: checkValidUser.bio
+                name: userStatus.name,
+                email: userStatus.email,
+                username: userStatus.username,
+                phone: userStatus.phone,
+                bio: userStatus.bio,
+                token: userStatus.token
             }
         });
 
@@ -186,4 +184,8 @@ const updateUserProfile = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
-module.exports = { generateToken, registerUser, loginUser, getUserProfile, updateUserProfile }; 
+
+const uploadimage = (req,res)=>{
+
+}
+module.exports = { generateToken, registerUser, loginUser, getUserProfile, updateUserProfile ,uploadimage}; 

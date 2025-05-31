@@ -6,6 +6,9 @@ const PORT = process.env.PORT || 3000
 const cors = require("cors");
 const { urlencoded } = require('body-parser');
 const authRouter = require('./routes/authRoutes');
+const reportRouter = require('./routes/reportRoutes');
+const taskRouter = require('./routes/tasksRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 app.use(cors({
     origin: process.env.ClientURL,
@@ -15,7 +18,10 @@ app.use(cors({
 app.use(express.json());
 
 //@Route ./api/auth , ./api/user ,  ./api/task , ./api/reports
-app.use('/api/user',authRouter);
+app.use('/api/auth',authRouter);
+//app.use('/api/report',reportRouter);
+
+
 
 app.listen(3000,()=>{
     console.log(urlencoded);

@@ -10,6 +10,8 @@ const authUser = async (req,res,next) => {
         }
         const decode = jwt.verify(token,process.env.TokenKey);
         const verify1 = await user.findOne({username : decode.id});
+        console.log(decode.id)
+        
         if(!verify1 || verify1.token != token) return res.status(400).json({msg:'token is invalid'});
         req.user = verify1;
         next();

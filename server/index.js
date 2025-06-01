@@ -9,14 +9,16 @@ const authRouter = require('./routes/authRoutes');
 const reportRouter = require('./routes/reportRoutes');
 const taskRouter = require('./routes/tasksRoutes');
 const userRoutes = require('./routes/userRoutes');
+const path = require('path');
 
 app.use(cors({
     origin: process.env.ClientURL,
     methood: ["get","post","delete","put"],
     allowedHeaders: ["Content-Type","Authorization"]
 }))
-app.use(express.json());
 
+app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //@Route ./api/auth , ./api/user ,  ./api/task , ./api/reports
 app.use('/api/auth',authRouter);
 //app.use('/api/report',reportRouter);

@@ -1,6 +1,7 @@
 const user = require('../models/userSchema');
 const bcrypt = require('bcrypt');
 const codeSchema = require('../models/adminCodeSchema');
+const {profileImage} = require('../globalVariable');
 const jwt = require('jsonwebtoken');
 
 const generateToken = (username) => {
@@ -31,9 +32,11 @@ const registerUser = async (req, res) => {
             username: username,
 
         })
-        const userStatus = await userDetail.save();
+        const registerUser = await userDetail.save();
         if (userStatus) {
-            return res.status(200).json({ msg: "User registered successfully", user: userStatus });
+            return res.status(200).json({ msg: "User registered successfully", user:{
+                username: registerUser.username
+            }  });
         }
         else return res.status(400).json({ msg: "Failed to save user in database" });
 
@@ -94,11 +97,13 @@ const loginUser = async (req, res) => {
 
         return res.status(200).json({
             msg: 'Login successful',
-            id: userRecord.id,
-            username: userRecord.username,
-            email: userRecord.email,
-            profileImage : userRecord.profileImage,
-            token: userRecord.token
+            user:{
+                id: userRecord.id,
+                username: userRecord.username,
+                email: userRecord.email,
+                profileImage : userRecord.profileImage,
+                token: userRecord.token
+            }
         });
 
     } catch (error) {
@@ -120,12 +125,16 @@ const getUserProfile = async (req, res) => {
         }
 
         return res.status(200).json({
-            name: getProfile.name,
-            username: getProfile.username,
-            email: getProfile.email,
-            phone: getProfile.phone,
-            role: getProfile.role,
-            bio: getProfile.bio
+            msg:'Profile successfully updated',
+            user:{
+                name: getProfile.name,
+                username: getProfile.username,
+                email: getProfile.email,
+                phone: getProfile.phone,
+                role: getProfile.role,
+                bio: getProfile.bio,
+                image: getProfile.profileImage
+            }
         });
 
     } catch (error) {
@@ -185,7 +194,21 @@ const updateUserProfile = async (req, res) => {
     }
 };
 
-const uploadimage = (req,res)=>{
-
+const uploadimage = async (req,res)=>{
+    try {
+        const {username} = req.user;
+        const imageURL = req.imageURL;
+        if(!imageURL) return res.status(400).json({msg:'profile image global is not defined'});
+        const updateUser = await user.findOne({ username: username });
+        console.log(username);
+        updateUser.profileImage = imageURL;
+        const updatedUser = updateUser.save();
+        res.status(200).json({
+            msg:'Profile Image uploaded successfully',
+            imageURL:updatedUser.profileImage
+        })
+    } catch (error) {
+        
+    }
 }
 module.exports = { generateToken, registerUser, loginUser, getUserProfile, updateUserProfile ,uploadimage}; 

@@ -22,6 +22,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //@Route ./api/auth , ./api/user ,  ./api/task , ./api/reports
 app.use('/api/auth',authRouter);
 //app.use('/api/report',reportRouter);
+app.use('/api/users',userRoutes);
+app.use('/api/tasks',taskRouter);
 
 
 

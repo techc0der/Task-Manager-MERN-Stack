@@ -62,9 +62,9 @@ const getTask = async (req, res) => {
 
 const getTaskById = async (req, res) => {
     try {
-        const task = await taskSchema.find({ _id: req.params.id, assignedTo: req.user._id })
+        const task = await taskSchema.find({ _id: req.params.id, assignedTo: req.user._id }).populate("assignedTo", "name email profileImage");
         if (task.length === 0) {
-            return res.status(404).json({ msg: 'No tasks found for this user' });
+            return res.status(404).json({ msg: 'Task not found' });
         }
         res.status(200).json({ msg: 'Task Founded', task: task });
     } catch (error) {
